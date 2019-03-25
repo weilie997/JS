@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>订单详情</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			width: 80%;
+			padding: 20px;
+		    margin: 20px auto;
+		}
+		/*订单步骤样式*/
+		.container .steps {
+			display: flex;
+		}
+		.container .steps .step {
+			flex-basis: 25%;
+		    margin-right: 0px;
+		    display: inline-block;
+		    position: relative;
+		    flex-shrink: 1;
+		}
+		.container .steps .step .step_head {
+			text-align: center;
+			position: relative;
+		    width: 100%;
+		}
+		.container .steps .step .step_main {
+			text-align: center;
+		    white-space: normal;
+		}
+		.step .step_head .step_line {
+			margin-right: 0px;
+			left: 50%;
+		    right: -50%;
+		    height: 2px;
+		    top: 11px;
+		    position: absolute;
+		    border-color: inherit;
+		    background-color: #c0c4cc;
+		}
+		.step .step_head .step_icon {
+			border-radius: 50%;
+		    border: 2px solid;
+		    border-color: inherit;
+	        position: relative;
+		    z-index: 1;
+		    display: inline-flex;
+		    justify-content: center;
+		    align-items: center;
+		    width: 24px;
+		    height: 24px;
+		    font-size: 14px;
+		    box-sizing: border-box;
+		    background: #fff;
+		    transition: .15s ease-out;
+		}
+		.step .step_head .step_icon .step_icon_inner {
+			display: inline-block;
+			user-select: none;
+		    text-align: center;
+		    font-weight: 700;
+		    line-height: 1;
+		    color: inherit;
+		}
+		.is_success {
+			color: #67c23a;
+    		border-color: #67c23a;
+		}
+		.is_process {
+			color: #303133;
+    		border-color: #303133;
+		}
+		.is_wait {
+			color: #c0c4cc;
+    		border-color: #c0c4cc;
+		}
+		.container .steps .step .step_main {
+			text-align: center;
+		    white-space: normal;
+		}
+		.step_main .step_title {
+			font-size: 16px;
+		    line-height: 38px;
+		}
+		.step_main .step_description {
+		    padding-left: 20%;
+		    padding-right: 20%;
+		    margin-top: -5px;
+		    font-size: 12px;
+		    line-height: 20px;
+		    font-weight: 400;
+		}
+		/*订单详情样式*/
+		.order_card {
+			margin-top: 15px;
+		    border: 1px solid #ebeef5;
+		    background-color: #fff;
+		    color: #303133;
+		    transition: .3s;
+		    border-radius: 4px;
+		    overflow: hidden;
+		}
+		.order_card .orderBody {
+			padding: 20px;
+		}
+		.order_card .orderBody .operate_container {
+			background: #f2f6fc;
+    		height: 80px;
+    		margin: -20px -20px 0;
+    		line-height: 80px;
+		}
+		.orderBody .operate_container .order_icon {
+			margin-left: 20px;
+		}
+		.color_danger {
+    		color: #f56c6c;
+		}
+		.orderBody .operate_container .operate_button_container {
+		    float: right;
+		    margin-right: 20px;
+		}
+		.operate_container .operate_button_container .button {
+			padding: 7px 15px;
+			font-size: 12px;
+		    border-radius: 3px;
+		    display: inline-block;
+		    line-height: 1;
+		    white-space: nowrap;
+		    cursor: pointer;
+		    background: #fff;
+		    border: 1px solid #dcdfe6;
+		    color: #606266;
+		    -webkit-appearance: none;
+		    text-align: center;
+		    box-sizing: border-box;
+		    outline: 0;
+		    margin: 0;
+		    transition: .1s;
+		    font-weight: 500;
+		}
+		.font_small {
+		    font-size: 14px;
+		    color: #606266;
+		}
+		.table_layout {
+		    margin-top: 20px;
+		    border-left: 1px solid #dcdfe6;
+		    border-top: 1px solid #dcdfe6;
+		}
+		.el_row {
+			box-sizing: border-box;
+			width: 100%;
+			display: flex;
+		}
+		.el-row:after, .el-row:before {
+    		display: table;
+		}
+		.table_title {
+			background: #f2f6fc;
+		    color: #303133;
+	        border-right: 1px solid #dcdfe6;
+		    border-bottom: 1px solid #dcdfe6;
+		    padding: 10px;
+		    font-size: 14px;
+	        float: left;
+		    box-sizing: border-box;
+		    text-align: center;
+		    width: 100%;
+		}
+		.table_cell {
+		    border-right: 1px solid #dcdfe6;
+		    border-bottom: 1px solid #dcdfe6;
+		    padding: 10px;
+		    font-size: 14px;
+		    text-align: center;
+	        height: 60px;
+		    line-height: 40px;
+		    color: #606266;
+		    overflow: hidden;
+		    float: left;
+		    box-sizing: border-box;
+		    width: 100%;
+		}
+		.goodsInfo .table_layout .table_cell {
+			height: 100px;
+		    line-height: 80px;
+		}
+	</style>
+</head>
+<body>
+		<div class="container">
+			<!-- 订单流程显示开始 -->
+			<div class="steps">
+				<div class="step">
+					<div class="step_head">
+						<div class="step_line"></div>
+						<div class="step_icon">
+							<div class="step_icon_inner">1</div>
+						</div>
+					</div>
+					<div class="step_main">
+						<div class="step_title">提交订单</div>
+						<div class="step_description"></div>
+					</div>
+				</div>
+				<div class="step">
+					<div class="step_head">
+						<div class="step_line"></div>
+						<div class="step_icon">
+							<div class="step_icon_inner">2</div>
+						</div>
+					</div>
+					<div class="step_main">
+						<div class="step_title">支付订单</div>
+						<div class="step_description"></div>
+					</div>
+				</div>
+				<div class="step">
+					<div class="step_head">
+						<div class="step_line"></div>
+						<div class="step_icon">
+							<div class="step_icon_inner">3</div>
+						</div>
+					</div>
+					<div class="step_main">
+						<div class="step_title">平台发货</div>
+						<div class="step_description"></div>
+					</div>
+				</div>
+				<div class="step">
+					<div class="step_head">
+						<!-- <div class="step_line"></div> -->
+						<div class="step_icon">
+							<div class="step_icon_inner">4</div>
+						</div>
+					</div>
+					<div class="step_main">
+						<div class="step_title">确认收货</div>
+						<div class="step_description"></div>
+					</div>
+				</div>
+			</div>
+			<!-- 订单流程显示结束 -->
+
+
+			<div class="order_card">
+				<div class="orderBody">
+					<!-- 订单状态栏开始 -->
+					<div class="operate_container">
+						<i class="fa fa-exclamation-circle order_icon color_danger"></i>
+						<span class="order_status color_danger"></span>
+						<!-- 订单待付款按钮 -->
+						<div class="operate_button_container" style="display:none;">
+							<button type="button" class="button">
+								<span>修改收货人信息</span>
+							</button>
+							<button type="button" class="button">
+								<span>修改商品信息</span>
+							</button>
+							<button type="button" class="button">
+								<span>关闭订单</span>
+							</button>
+							<button type="button" class="button">
+								<span>订单备注</span>
+							</button>
+						</div>
+						<!-- 订单待发货按钮 -->
+						<div class="operate_button_container" style="display:none;">
+							<button type="button" class="button">
+								<span>修改收货人信息</span>
+							</button>
+							<button type="button" class="button">
+								<span>修改商品信息</span>
+							</button>
+							<button type="button" class="button">
+								<span>取消订单</span>
+							</button>
+							<button type="button" class="button">
+								<span>订单备注</span>
+							</button>
+						</div>
+						<!-- 订单已发货按钮 -->
+						<div class="operate_button_container" style="display:none;">
+							<button type="button" class="button">
+								<span>订单跟踪</span>
+							</button>
+							<button type="button" class="button">
+								<span>订单备注</span>
+							</button>
+						</div>
+						<!-- 订单已完成按钮 -->
+						<div class="operate_button_container" style="display:none;">
+							<button type="button" class="button">
+								<span>订单跟踪</span>
+							</button>
+							<button type="button" class="button">
+								<span>订单备注</span>
+							</button>
+						</div>
+						<!-- 订单已关闭按钮 -->
+						<div class="operate_button_container" style="display:none;">
+							<button type="button" class="button">
+								<span>删除订单</span>
+							</button>
+							<button type="button" class="button">
+								<span>订单备注</span>
+							</button>
+						</div>
+					</div>
+					<!-- 订单状态栏结束 -->
+					<!-- 订单信息 -->
+					<div class="orderInfo">
+						<div style="margin-top:20px">
+							<i class="fa fa-bookmark"></i>
+							<span class="font_small">基本信息</span>
+						</div>
+						<div class="table_layout">
+							<div class="el_row">
+								<div class="table_title">订单号</div>
+								<div class="table_title">物流单号</div>
+								<div class="table_title">用户账号</div>
+								<div class="table_title">支付方式</div>
+								<div class="table_title">配送方式</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">201903200951123456</div>
+								<div class="table_cell">暂无</div>
+								<div class="table_cell">edf</div>
+								<div class="table_cell">支付宝</div>
+								<div class="table_cell">快递</div>
+							</div>
+						</div>
+					</div>
+					<!-- 收货人信息 -->
+					<div class="consigneeInfo">
+						<div style="margin-top:20px">
+							<i class="fa fa-bookmark"></i>
+							<span class="font_small">收货人信息</span>
+						</div>
+						<div class="table_layout">
+							<div class="el_row">
+								<div class="table_title">收货人</div>
+								<div class="table_title">手机号码</div>
+								<div class="table_title">邮政编码</div>
+								<div class="table_title">收货地址</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">小明</div>
+								<div class="table_cell">13152469877</div>
+								<div class="table_cell">522222</div>
+								<div class="table_cell" title="广东省广州市天河区前进街道宦溪西路18号">广东省广州市天河区前进街道宦溪西路18号</div>
+							</div>
+						</div>
+					</div>
+					<!-- 商品信息 -->
+					<div class="goodsInfo">
+						<div style="margin-top:20px">
+							<i class="fa fa-bookmark"></i>
+							<span class="font_small">商品信息</span>
+						</div>
+						<div class="table_layout">
+							<div class="el_row">
+								<div class="table_title">商品图片</div>
+								<div class="table_title">商品名</div>
+								<div class="table_title">商品价格</div>
+								<div class="table_title">商品数量</div>
+								<div class="table_title">小计</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+							<div class="el_row">
+								<div class="table_cell">
+									<img src="img/good1.jpg" style="height:80px">
+								</div>
+								<div class="table_cell">化学九年级上册(实体书)</div>
+								<div class="table_cell">￥1</div>
+								<div class="table_cell">3</div>
+								<div class="table_cell">￥3</div>
+							</div>
+						</div>
+						<div style="float:right;margin:20px">
+							合计：
+							<span class="totalPrice color_danger">￥999</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+
+		var orderStatus = 0;//订单状态  0：待付款  1：待发货  2：已发货  3：已完成  4：已关闭
+
+		$('.operate_button_container').hide();
+		$('.operate_button_container').eq(orderStatus).show();
+
+
+		$('.step:eq('+orderStatus+') .step_icon,.step:eq('+orderStatus+') .step_main').addClass('is_success'); 
+		$('.step_icon_inner:eq('+orderStatus+'),.step_icon_inner:lt('+orderStatus+')').html('<i class="fa fa-check"></i>')
+		$('.step:lt('+orderStatus+') .step_icon,.step:lt('+orderStatus+') .step_main').addClass('is_success');
+		$('.step:eq('+orderStatus+1+') .step_icon,.step:eq('+orderStatus+1+') .step_main').addClass('is_process');
+
+
+		if(orderStatus == 0){ //待付款
+			$('.order_status').text('当前订单状态：待付款');
+			$('.step:eq(2) .step_icon,.step:eq(2) .step_main').addClass('is_wait');
+			$('.step:eq(3) .step_icon,.step:eq(3) .step_main').addClass('is_wait');
+			$('.step_description:eq(0)').text('2018-09-15 12:24:27');//提交订单时间
+		}else if(orderStatus == 1){ //待发货
+			$('.order_status').text('当前订单状态：待发货');
+			$('.step:eq(3) .step_icon,.step:eq(3) .step_main').addClass('is_wait');
+			$('.step_description:eq(0)').text('2018-09-15 12:24:27');//提交订单时间
+			$('.step_description:eq(1)').text('2018-09-16 08:12:55');//支付订单时间
+		}else if(orderStatus == 2){ //已发货
+			$('.order_status').text('当前订单状态：已发货');
+			$('.step_description:eq(0)').text('2018-09-15 12:24:27');//提交订单时间
+			$('.step_description:eq(1)').text('2018-09-16 08:12:55');//支付订单时间
+			$('.step_description:eq(2)').text('2018-09-16 10:33:44');//发货时间
+		}else if(orderStatus == 3){ //已完成
+			$('.order_status').text('当前订单状态：已完成');
+			$('.step_description:eq(0)').text('2018-09-15 12:24:27');//提交订单时间
+			$('.step_description:eq(1)').text('2018-09-16 08:12:55');//支付订单时间
+			$('.step_description:eq(2)').text('2018-09-16 10:33:44');//发货时间
+			$('.step_description:eq(3)').text('2018-09-17 16:24:01');//收货时间
+		}else { //已关闭
+			$('.order_status').text('当前订单状态：已关闭');
+			$('.step .step_icon,.step .step_main').removeClass('is_success');
+			$('.step:eq(0) .step_icon,.step:eq(0) .step_main').addClass('is_success');
+			$('.step_description:eq(0)').text('2018-09-15 12:24:27');//提交订单时间
+		}
+
+
+
+	})
+</script>
+</body>
+</html>
